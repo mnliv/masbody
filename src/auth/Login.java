@@ -2,7 +2,14 @@ package auth;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import auth.User;
 
 public class Login extends JPanel {
     private JPanel panelButton;
@@ -19,6 +26,9 @@ public class Login extends JPanel {
 
     private JPasswordField fieldPassword;
     private JTextField fieldEmail;
+
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
 
     public Login() {
         // Get the default toolkit
@@ -47,7 +57,7 @@ public class Login extends JPanel {
         lblEmail = new JLabel("Email:");
         lblEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        fieldEmail = new JTextField();
+        fieldEmail = new JTextField("admin@dev.com");
         fieldEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         fieldEmail.setForeground(new java.awt.Color(102, 102, 102));
         fieldEmail.setColumns(20);
@@ -55,7 +65,7 @@ public class Login extends JPanel {
         lblPassword = new JLabel("Mật khẩu:");
         lblPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        fieldPassword = new JPasswordField();
+        fieldPassword = new JPasswordField("testpass");
         fieldPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         fieldPassword.setColumns(20);
 
@@ -139,9 +149,61 @@ public class Login extends JPanel {
 
         gbc.gridx = 1;
         add(panelLeft, gbc);
+
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnLoginActionPerformed(e);
+            }
+        });
     }
 
     public void setSignUpButtonListener(ActionListener listener) {
         btnSignUp.addActionListener(listener);
+    }
+
+    public void setCardLayout(CardLayout cardLayout, JPanel cardPanel) {
+        this.cardLayout = cardLayout;
+        this.cardPanel = cardPanel;
+    }
+
+    private void btnLoginActionPerformed(ActionEvent e) {
+        String email = fieldEmail.getText();
+        char[] password = fieldPassword.getPassword();
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/masbody","admin","admin");
+            PreparedStatement  stmt = con.prepareStatement("SELECT * FROM user WHERE email = ? LIMIT 1;");
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int id = Integer.parseInt(rs.getString("id"));
+                String dbUserName = rs.getString("username");
+                String dbEmail = rs.getString("email");
+                String dbPassword = rs.getString("hashpass");
+                String dbBirthday = rs.getString("birthday");
+                if (email.equals(dbEmail)) {
+                    if (new String(password).equals(dbPassword)) {
+                        System.out.println("Login success");
+                        User user = User.getInstance();
+                        user.setInformation(id, dbUserName, dbEmail, dbBirthday);
+                        cardLayout.show(cardPanel, "mainScreen");
+                    } else {
+                        showErrorMessage("Wrong password!");
+                    }
+                } else {
+                    showErrorMessage("Email not found!");
+                }
+            } else {
+                showErrorMessage("Email not found!");
+            }
+            con.close();
+        } catch (Exception error) {
+            System.out.println(error);
+        }
+    }
+
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -218,7 +218,6 @@ public class SignUp extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 btnSignUpActionPerformed(e);
-
             }
         });
     }
@@ -260,13 +259,28 @@ public class SignUp extends JPanel {
             return;
         }
 
-        Boolean isCreated = createUser(username, email, password, birthday);
-        if (isCreated) {
+        java.util.Date date;
+        SimpleDateFormat outputFormat;
+        String formatedBirthday;
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+            date = inputFormat.parse(birthday);
+            outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            formatedBirthday = outputFormat.format(date);
+        } catch (ParseException parseError) {
+            parseError.printStackTrace();
+            return;
+        }
+
+        int id = createUser(username, email, password, formatedBirthday);
+        if (id > 0) {
             System.out.println("Created Success!");
         } else {
             showErrorMessage("Create user fail");
             return;
         }
+        User user = User.getInstance();
+        user.setInformation(id, username, email, formatedBirthday);
         cardLayout.show(cardPanel, "mainScreen");
     }
 
@@ -315,41 +329,39 @@ public class SignUp extends JPanel {
         return false;
     }
 
-    private boolean createUser(String username, String email, char[] password, String birthday) {
-        java.util.Date date;
-        SimpleDateFormat outputFormat;
-        String formatedBirthday;
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
-            date = inputFormat.parse(birthday);
-            outputFormat = new SimpleDateFormat("yyyy-MM-dd");
-            formatedBirthday = outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
-        System.out.println(formatedBirthday);
+    private int createUser(String username, String email, char[] password, String birthday) {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost/masbody","admin","admin");
-            PreparedStatement  stmt = con.prepareStatement("INSERT INTO user (username, email, birthday, hashpass) VALUES (?, ?, ? ,?)");
+            PreparedStatement  stmt = con.prepareStatement(
+                "INSERT INTO user (username, email, birthday, hashpass) VALUES (?, ?, ? ,?)",
+                PreparedStatement.RETURN_GENERATED_KEYS
+                );
             stmt.setString(1, username);
             stmt.setString(2, email);
-            stmt.setString(3, formatedBirthday);
+            stmt.setString(3, birthday);
             stmt.setString(4, new String(password));
             int rowsAffected = stmt.executeUpdate();
-            con.close();
             // Check the result
             if (rowsAffected > 0) {
                 System.out.println("Data inserted successfully!");
-                return true;
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int generatedId = generatedKeys.getInt(1);
+                        con.close();
+                        return generatedId;
+                    }
+                }
+                con.close();
+                return -1;
             } else {
                 System.out.println("Failed to insert data.");
-                return false;
+                con.close();
+                return -1;
             }
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return -1;
         }
     }
 

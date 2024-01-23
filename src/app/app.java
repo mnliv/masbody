@@ -15,7 +15,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class app extends JFrame{
     private JPanel panelMain;
     private CardLayout cardLayout;
@@ -24,6 +23,7 @@ public class app extends JFrame{
     private Login login;
     private SignUp signUp;
     private MainScreen mainScreen;
+
 
         public app() {
             setTitle("App");
@@ -40,6 +40,7 @@ public class app extends JFrame{
             mainScreen = new MainScreen();
 
             signUp.setCardLayout(cardLayout, cardPanel);
+            login.setCardLayout(cardLayout, cardPanel);
 
 
             cardPanel.add(login, "login");
