@@ -41,6 +41,7 @@ public class app extends JFrame{
 
             signUp.setCardLayout(cardLayout, cardPanel);
             login.setCardLayout(cardLayout, cardPanel);
+            mainScreen.setCardLayout(cardLayout, cardPanel);
 
 
             cardPanel.add(login, "login");

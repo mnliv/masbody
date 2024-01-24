@@ -6,6 +6,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
 import auth.Login;
+import auth.User;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,6 +29,9 @@ public class MainScreen extends JPanel {
     private IBM IBM;
     private AdviseScreen adviseScreen;
     private Data data;
+
+    private CardLayout cardLayout;
+    private JPanel cardPanel;
 
     public MainScreen() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -255,6 +259,24 @@ public class MainScreen extends JPanel {
                 layoutContent.show(panelRight, "data");
             }
         });
+
+        panelBottomLeft.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                panelBottomLeft.setBackground( new Color (0,0,153));  // Change to the desired hover color
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                panelBottomLeft.setBackground(panelLeft.getBackground());
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Clear information
+                User.setInformation(0, "", "", "");
+                layoutContent.show(panelRight, "homePage");
+                cardLayout.show(cardPanel, "login");
+            }
+        });
     }
 
     private JLabel createLogoLabel(String path, int sizeX, int sizeY) {
@@ -265,5 +287,10 @@ public class MainScreen extends JPanel {
         JLabel lbl = new JLabel(scaledIcon);
         lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         return lbl;
+    }
+
+    public void setCardLayout(CardLayout cardLayout, JPanel cardPanel) {
+        this.cardLayout = cardLayout;
+        this.cardPanel = cardPanel;
     }
 }
