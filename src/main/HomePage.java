@@ -1,65 +1,63 @@
-
 package main;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 
 public class HomePage extends JPanel {
+    private JPanel panelBottom;
+    private JLabel titleLabel, lblImage;
+    private JTextArea descriptionArea;
 
     public HomePage() {
         initComponents();
     }
 
     private void initComponents() {
-        // Thiết lập layout cho JPanel
-        setLayout(new BorderLayout());
-        setBackground(new Color(240, 240, 240)); // Màu nền
+        setLayout(new GridBagLayout());
+        setBackground(new Color(255, 255, 255));
 
-        // Tiêu đề của ứng dụng
-        JLabel titleLabel = new JLabel("Masbody");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 60));
-        titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        titleLabel.setForeground(new Color(70, 130, 180)); // Màu chữ
-        add(titleLabel, BorderLayout.NORTH);
+        titleLabel = new JLabel("Masbody");
+        titleLabel.setFont(new Font("Segoe UI Black", Font.BOLD, 50));
+        titleLabel.setForeground(new Color(0, 102, 204));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Mô tả ứng dụng với nhiều chữ và phóng to chữ
-        JTextArea descriptionArea = new JTextArea(
-                "Chào mừng bạn đến với Masbody - Ứng dụng chăm sóc và theo dõi tình trạng sức khỏe của bạn.\n" +
-                        "Masbody giúp bạn theo dõi và quản lý thông tin về hoạt động vận động, dinh dưỡng, và nhiều hơn nữa.\n" +
-                        "Hãy bắt đầu hành trình chăm sóc sức khỏe của bạn ngay hôm nay!\n" +
-                        "\n" +
-                        "Masbody cung cấp:\n" +
-                        "- Theo dõi lịch sử hoạt động và tiêu thụ năng lượng.\n" +
-                        "- Gợi ý chế độ ăn uống và lịch trình tập luyện.\n" +
-                        "- Thông báo nhắc nhở để duy trì thói quen lành mạnh.\n" +
-                        "và nhiều tính năng khác đang chờ bạn khám phá!"
-        );
+        descriptionArea = new JTextArea();
         descriptionArea.setEditable(false);
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
-        descriptionArea.setFont(new Font("Arial", Font.PLAIN, 18));
-        descriptionArea.setForeground(new Color(50, 50, 50)); // Màu chữ
-        descriptionArea.setBackground(new Color(240, 240, 240)); // Màu nền
-        descriptionArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Khoảng cách từ lề
+        descriptionArea.setFont(new Font("Segoe UI", Font.PLAIN, 30));
+        descriptionArea.setText("Chào mừng bạn đến với Masbody - Ứng dụng chăm sóc và theo dõi tình trạng sức khoẻ của bạn.\n\nMasbody giúp bạn tư vấn và quản lý thông tin về sức khoẻ, ngoại hình và đưa ra lời khuyên hợp lí.\n\nHãy bắt đầu hành trình chăm sóc sức khoẻ của bạn ngay hôm nay!");
+        descriptionArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        descriptionArea.setAlignmentX(Component.CENTER_ALIGNMENT);
+        descriptionArea.setBackground(new Color(0, 51, 102));
+        descriptionArea.setForeground(new Color(255, 255, 255));
 
-        // Đặt khả năng cuộn cho vùng mô tả
-        JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        add(scrollPane, BorderLayout.CENTER);
 
-        // Tạo một nút "Bắt đầu" để bổ sung tính năng tương lai
-        JButton startButton = new JButton("Bắt đầu");
-        startButton.setFont(new Font("Arial", Font.BOLD, 24));
-        startButton.setForeground(Color.WHITE); // Màu chữ
-        startButton.setBackground(new Color(70, 130, 180)); // Màu nền
-        startButton.setBorderPainted(false); // Ẩn đường viền
-        startButton.setFocusPainted(false); // Ẩn đường viền khi được chọn
-        startButton.addActionListener(e -> {
-            // Xử lý sự kiện khi nút được nhấp
-            JOptionPane.showMessageDialog(this, "Chức năng này sẽ được triển khai trong tương lai!");
-        });
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.setBackground(new Color(240, 240, 240)); // Màu nền của panel chứa nút
-        buttonPanel.add(startButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        lblImage = new JLabel();
+        lblImage.setIcon(new ImageIcon(getClass().getResource("/icon/health.jpg")));
+
+        panelBottom = new JPanel();
+        panelBottom.setLayout(new BoxLayout(panelBottom, BoxLayout.X_AXIS)); // Use BoxLayout for horizontal alignment
+        panelBottom.setBackground(new Color(255, 255, 255));
+        panelBottom.add(lblImage);
+        panelBottom.add(Box.createRigidArea(new Dimension(10, 0))); // Add some spacing between image and text
+        panelBottom.add(descriptionArea);
+        panelBottom.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 0.1;
+        gbc.fill = GridBagConstraints.BOTH;
+        add(titleLabel, gbc);
+
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        add(panelBottom, gbc);
     }
 }

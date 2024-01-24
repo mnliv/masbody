@@ -8,11 +8,14 @@ import javax.swing.border.MatteBorder;
 import auth.Login;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import main.HomePage;
-import main.IBM;;
+import main.IBM;
+import main.AdviseScreen;
 
 public class MainScreen extends JPanel {
     private JPanel panelLeft, panelRight, panelTopLeft, panelMiddleLeft, panelBottomLeft, panelListHome, panelListAdvise, panelListData;
@@ -23,6 +26,8 @@ public class MainScreen extends JPanel {
 
     private HomePage homePage;
     private IBM IBM;
+    private AdviseScreen adviseScreen;
+    private Data data;
 
     public MainScreen() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -43,7 +48,7 @@ public class MainScreen extends JPanel {
         panelTopLeft = new JPanel();
         panelTopLeft.setBackground(panelLeft.getBackground());
         panelTopLeft.setLayout(new GridBagLayout());
-        panelTopLeft.setBorder( new MatteBorder(0, 0, 5, 0, Color.WHITE));
+        // panelTopLeft.setBorder( new MatteBorder(0, 0, 5, 0, Color.WHITE));
         panelTopLeft.setEnabled(true);
         panelTopLeft.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -170,11 +175,11 @@ public class MainScreen extends JPanel {
 
 
         gbcLeft.gridy = 1;
-        gbcLeft.weighty = 0.85;
+        gbcLeft.weighty = 0.8;
         panelLeft.add(panelMiddleLeft, gbcLeft);
 
         gbcLeft.gridy = 2;
-        gbcLeft.weighty = 0.05;
+        gbcLeft.weighty = 0.1;
         panelLeft.add(panelBottomLeft, gbcLeft);
 
         layoutContent = new CardLayout();
@@ -183,11 +188,15 @@ public class MainScreen extends JPanel {
 
         homePage = new HomePage();
         IBM = new IBM();
+        adviseScreen = new AdviseScreen();
+        data = new Data();
 
         panelRight.add(homePage, "homePage");
         panelRight.add(IBM, "IBM");
+        panelRight.add(adviseScreen, "adviseScreen");
+        panelRight.add(data, "data");
 
-        layoutContent.show(panelRight, "IBM");
+        layoutContent.show(panelRight, "homePage");
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -209,6 +218,11 @@ public class MainScreen extends JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 panelListHome.setBackground(panelLeft.getBackground());
             }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                layoutContent.show(panelRight, "homePage");
+            }
         });
 
         panelListAdvise.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -219,6 +233,11 @@ public class MainScreen extends JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 panelListAdvise.setBackground(panelLeft.getBackground());
             }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                layoutContent.show(panelRight, "adviseScreen");
+            }
         });
 
         panelListData.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -228,6 +247,12 @@ public class MainScreen extends JPanel {
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 panelListData.setBackground(panelLeft.getBackground());
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                data.updateTable();
+                layoutContent.show(panelRight, "data");
             }
         });
     }

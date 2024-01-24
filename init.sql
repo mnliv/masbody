@@ -5,3 +5,10 @@ CREATE TABLE IF NOT EXISTS masbody.user (
     birthday DATE,
     hashpass VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS masbody.history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_date datetime default now(),
+    description VARCHAR(1000) NULL NULL,
+    advise VARCHAR(1000) NULL NULL
+);
